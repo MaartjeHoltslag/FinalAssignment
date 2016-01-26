@@ -1,24 +1,23 @@
 from download import download_image
 from modelcreator import create_model
 from classification import classify
+import geojson
 import sys
 import os
-import Image
+import gdal
+from gdalconst import *
+from osgeo.gdalconst import GA_ReadOnly, GDT_Float32
+from PIL import Image
 import numpy
-
-#sys.path.append('/usr/lib/otb/python')
-#ITK_AUTOLOAD_PATH="/usr/local/lib/otb/applications"
-#PYTHONPATH = "/usr/local/lib/otb/python"
-
 import otbApplication 
 
 #files
-statistics_file = "/home/user/project/output/Statistics.xml"
-in_file = "/home/user/project/20151107_200759_0b0a_analytic.tif"
-confusion_matrix = "/home/user/project/output/Confusion.csv"
-output_model = "/home/user/project/output/Output.model"
-training_poly = "/home/user/project/TrainPoly.shp"
-output_map = "/home/user/project/output/ClassifiedImage.tif"
+statistics_file = "/home/user/FinalAssignment/output/Statistics.xml"
+crop_file = "/home/user/FinalAssignment/20151107_200759_0b0a_analytic.tif"
+confusion_matrix = "/home/user/FinalAssignment/output/Confusion.csv"
+output_model = "/home/user/FinalAssignment/output/Output.model"
+training_poly = "/home/user/FinalAssignment/TrainPoly.shp"
+output_map = "/home/user/FinalAssignment/output/ClassifiedImage.tif"
 
 #url = "https://api.planet.com/v0/scenes/ortho/"
 #key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
@@ -27,9 +26,6 @@ output_map = "/home/user/project/output/ClassifiedImage.tif"
 #sf_se = (-122.487, 37.699)
 #sf_ne = (sf_se[0], sf_nw[1])
 #sf_sw = (sf_nw[0], sf_se[1])
-#
-#
-#import geojson
 #
 #poly = geojson.Polygon([[sf_nw, sf_ne, sf_se, sf_sw, sf_nw]])
 #intersects = geojson.dumps(poly)
@@ -46,6 +42,17 @@ output_map = "/home/user/project/output/ClassifiedImage.tif"
 #for scene in scenes_data:
 #    thumb_link = scene["properties"]["data"]["products"]["analytic"]["full"]
 #    download_image(thumb_link, key)
+#
+
+
+#original = Image.open(output_map)
+#width, height = original.size
+#left = width/4
+#top = height/4
+#right = 3 * (width/4)
+#bottom = 3 * (height/4)
+#crop_map = original.crop((left, top, right, bottom))
+#crop_map.save("/home/user/FinalAssignment/output/ClassifiedCroppedImage.tif")
 
 #Classifying map
 
@@ -56,59 +63,44 @@ create_model(in_file, statistics_file, training_poly, output_model, confusion_ma
 #Apply model
 classify(output_model, in_file, statistics_file, output_map)
 
-
+#Delete all none trees from dataset
 image =Image.open(output_map)
 array = numpy.array(image)
 
+#numpy.where(array==0,-9999,array)
+dataSource = gdal.Open(output_map, GA_ReadOnly)
+
+# Write the result to disk
+driver = gdal.GetDriverByName('GTiff')
+outDataSet=driver.Create('/home/user/FinalAssignment/output/ClassifiedImageArray.tif', dataSource.RasterXSize, dataSource.RasterYSize, 1, GDT_Float32)
+outBand = outDataSet.GetRasterBand(1)
+outBand.WriteArray(array,0,0)
+outBand.SetNoDataValue(0)
+
+# set the projection and extent information of the dataset
+outDataSet.SetProjection(dataSource.GetProjection())
+outDataSet.SetGeoTransform(dataSource.GetGeoTransform())
+
+# Finally let's save it... or like in the OGR example flush it
+outBand.FlushCache()
+outDataSet.FlushCache()
+
+#Set to kml file
+dataset = gdal.Open(output_map, GA_ReadOnly)
+cmd = "gdal2tiles.py -r near -k "+ output_map + " /home/user/FinalAssignment/output"
+os.system(cmd)
 
 
-array2 = numpy.delete(array, [0])
-testImage = Image.fromarray(array2)
-testImage.save("/home/user/project/output/TestImage.tif")
-print array
+original = Image.open('/home/user/FinalAssignment/output/ClassifiedImageArray.tif')
+width, height = original.size
+left = width/4
+top = height/4
+right = 3 * (width/4)
+bottom = 3 * (height/4)
+crop_map = original.crop((left, top, right, bottom))
+crop_map.save("/home/user/FinalAssignment/output/ClassifiedCroppedImage.tif")
+crop_image = "/home/user/FinalAssignment/output/ClassifiedCroppedImage.tif"
 
 
-
-numpy.clip(array, 1,1,out=a)
-for line in array:
-    length_line = len(line)
-    
-    
-
-for line in range(len(array)):
-    for element in range(length_line):
-        if array[line][element] != 1:
-            array[line][element] = None
-        else:
-            array[line][element] = 1
-
-#Display result
-
-
-from osgeo import gdal, ogr
-import sys
-# this allows GDAL to throw Python Exceptions
-gdal.UseExceptions()
-
-#
-#  get raster datasource
-#
-src_ds = gdal.Open(output_map)
-
-try:
-    srcband = src_ds.GetRasterBand(0)
-except RuntimeError, e:
-    # for example, try GetRasterBand(10)
-    print 'Band ( %i ) not found' % band_num
-    print e
-    sys.exit(1)
-
-#
-#  create output datasource
-#
-dst_layername = "POLYGONIZED_STUFF"
-drv = ogr.GetDriverByName("ESRI Shapefile")
-dst_ds = drv.CreateDataSource( dst_layername + ".shp" )
-dst_layer = dst_ds.CreateLayer(dst_layername, srs = None )
-
-gdal.Polygonize( srcband, None, dst_layer, -1, [], callback=None )
+cmdo = "gdalwarp -t_srs 'EPSG:4326' "+ crop_image + " /home/user/FinalAssignment/output/ClassifiedCroppedImageLatLon.tif"
+os.system(cmdo)
