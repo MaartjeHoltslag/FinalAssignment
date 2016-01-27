@@ -1,20 +1,12 @@
+#Libraries
 from download import *
 from modelcreator import create_model
 from classification import classify
 from treeselection import select_trees
-import geojson
-import sys
-import os
-import gdal
-from gdalconst import *
-from osgeo.gdalconst import GA_ReadOnly, GDT_Float32
-from PIL import Image
-import numpy
-import otbApplication 
+from sizecutter import cut_size
 
-#files
+#Files
 statistics_file = "/home/user/FinalAssignment/output/Statistics.xml"
-crop_file = "/home/user/FinalAssignment/20151107_200759_0b0a_analytic.tif"
 confusion_matrix = "/home/user/FinalAssignment/output/Confusion.csv"
 output_model = "/home/user/FinalAssignment/output/Output.model"
 training_poly = "/home/user/FinalAssignment/TrainPoly.shp"
@@ -22,17 +14,21 @@ output_map = "/home/user/FinalAssignment/output/ClassifiedImage.tif"
 selection_map = "/home/user/FinalAssignment/output/ClassifiedImageTrees.tif"
 in_file = "/home/user/FinalAssignment/output/InputMap.tif"
 
+#Data source
 url = "https://api.planet.com/v0/scenes/ortho/"
 key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
 
+#Coordinates of point
 nw = (-122.486, 37.698)
 se = (-122.487, 37.699)
 
 #Download the image
 select_image(url, key, nw, se)
+#Load the downloaded image to a variable
+crop_file = "/home/user/FinalAssignment/20151107_200759_0b0a_analytic.tif"
+
 #Cut to size
-cmd1 = "gdal_translate -srcwin 1500 1000 1500 2000 " + crop_file + " " + in_file
-os.system(cmd1)
+cut_size(crop_file, 1500, 1000, 1500, 2000, in_file)
 
 #Creating model to classify trees
 create_model(in_file, statistics_file, training_poly, output_model, confusion_matrix)
