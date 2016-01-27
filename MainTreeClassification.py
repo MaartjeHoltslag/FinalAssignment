@@ -40,8 +40,3 @@ classify(output_model, in_file, statistics_file, output_map)
 
 #Delete all none trees from dataset
 select_trees(output_map, selection_map)
-
-##Set to kml file
-#dataset = gdal.Open("/home/user/FinalAssignment/output/ClassifiedImageArray.tif", GA_ReadOnly)
-#cmd = "gdal2tiles.py -a -k /home/user/FinalAssignment/output/ClassifiedImageArray.tif /home/user/FinalAssignment/output"
-#os.system(cmd)
