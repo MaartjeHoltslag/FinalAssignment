@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append('/usr/lib/otb/python')
+
 import otbApplication 
 
 def classify(input_model, in_file, statistics_file, output_map):

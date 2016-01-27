@@ -1,9 +1,11 @@
 #Libraries
 from selectimage import select_image
 from sizecutter import cut_size
+from objectbased import select_object
 
 #Files
 in_file = "/home/user/FinalAssignment/output/InputMapObject.tif"
+out_file = "/home/user/FinalAssignment/output/OutputMapObject.shp"
 
 #Data source
 url = "https://api.planet.com/v0/scenes/ortho/"
@@ -25,3 +27,10 @@ crop_file = "/home/user/FinalAssignment/20150813_225645_0b09_visual.tif"
 
 #Cut to size
 cut_size(crop_file, 1250, 1500, 750, 750, in_file)
+
+#Use object based selection for 
+expression = "(p1b2 < 100) and ((p1b2 > p1b1)or(p1b2>p1b3)) and (p1b1 < 90) and (p1b3<90)"
+min_size = 5 
+OBIA = "SHAPE_RegionRatio > 0.65"
+
+select_object(in_file, expression, min_size, OBIA, out_file)
