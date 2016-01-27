@@ -1,6 +1,7 @@
 from download import download_image
 from modelcreator import create_model
 from classification import classify
+from treeselection import select_trees
 import geojson
 import sys
 import os
@@ -18,42 +19,33 @@ confusion_matrix = "/home/user/FinalAssignment/output/Confusion.csv"
 output_model = "/home/user/FinalAssignment/output/Output.model"
 training_poly = "/home/user/FinalAssignment/TrainPoly.shp"
 output_map = "/home/user/FinalAssignment/output/ClassifiedImage.tif"
+selection_map = "/home/user/FinalAssignment/output/ClassifiedImageTrees.tif"
 in_file = "/home/user/FinalAssignment/output/InputMap.tif"
 
-#url = "https://api.planet.com/v0/scenes/ortho/"
-#key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
-#
-#sf_nw = (-122.486, 37.698)
-#sf_se = (-122.487, 37.699)
-#sf_ne = (sf_se[0], sf_nw[1])
-#sf_sw = (sf_nw[0], sf_se[1])
-#
-#poly = geojson.Polygon([[sf_nw, sf_ne, sf_se, sf_sw, sf_nw]])
-#intersects = geojson.dumps(poly)
-#
-#params = {
-#    "intersects": intersects,
-#}
-# 
-#r = requests.get(url, params=params, auth=(key, ''))
-#r.raise_for_status()
-#data = r.json()
-#scenes_data = data["features"]
-#   
-#for scene in scenes_data:
-#    thumb_link = scene["properties"]["data"]["products"]["analytic"]["full"]
-#    download_image(thumb_link, key)
-#
+url = "https://api.planet.com/v0/scenes/ortho/"
+key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
 
+sf_nw = (-122.486, 37.698)
+sf_se = (-122.487, 37.699)
+sf_ne = (sf_se[0], sf_nw[1])
+sf_sw = (sf_nw[0], sf_se[1])
 
-#original = Image.open(output_map)
-#width, height = original.size
-#left = width/4
-#top = height/4
-#right = 3 * (width/4)
-#bottom = 3 * (height/4)
-#crop_map = original.crop((left, top, right, bottom))
-#crop_map.save("/home/user/FinalAssignment/output/ClassifiedCroppedImage.tif")
+poly = geojson.Polygon([[sf_nw, sf_ne, sf_se, sf_sw, sf_nw]])
+intersects = geojson.dumps(poly)
+
+params = {
+    "intersects": intersects,
+}
+ 
+r = requests.get(url, params=params, auth=(key, ''))
+r.raise_for_status()
+data = r.json()
+scenes_data = data["features"]
+   
+for scene in scenes_data:
+    thumb_link = scene["properties"]["data"]["products"]["analytic"]["full"]
+    download_image(thumb_link, key)
+
 
 #Cut to size
 cmd1 = "gdal_translate -srcwin 1500 1000 1500 2000 " + crop_file + " " + in_file
@@ -64,31 +56,11 @@ os.system(cmd1)
 #Creating model
 create_model(in_file, statistics_file, training_poly, output_model, confusion_matrix)
 
-
 #Apply model
 classify(output_model, in_file, statistics_file, output_map)
 
 #Delete all none trees from dataset
-image =Image.open(output_map)
-array = numpy.array(image)
-
-#numpy.where(array==0,-9999,array)
-dataSource = gdal.Open(output_map, GA_ReadOnly)
-
-# Write the result to disk
-driver = gdal.GetDriverByName('GTiff')
-outDataSet=driver.Create('/home/user/FinalAssignment/output/ClassifiedImageArray.tif', dataSource.RasterXSize, dataSource.RasterYSize, 1, GDT_Float32)
-outBand = outDataSet.GetRasterBand(1)
-outBand.WriteArray(array,0,0)
-outBand.SetNoDataValue(0)
-
-# set the projection and extent information of the dataset
-outDataSet.SetProjection(dataSource.GetProjection())
-outDataSet.SetGeoTransform(dataSource.GetGeoTransform())
-
-# Finally let's save it... or like in the OGR example flush it
-outBand.FlushCache()
-outDataSet.FlushCache()
+select_trees(output_map, selection_map)
 
 #Set to kml file
 dataset = gdal.Open("/home/user/FinalAssignment/output/ClassifiedImageArray.tif", GA_ReadOnly)
