@@ -1,5 +1,4 @@
 #Libraries
-from download import *
 from modelcreator import create_model
 from classification import classify
 from treeselection import select_trees
@@ -23,7 +22,10 @@ nw = (-122.486, 37.698)
 se = (-122.487, 37.699)
 
 #Download the image
-select_image(url, key, nw, se)
+try:
+    select_image(url, key, nw, se, "analytic")
+except:
+    print "ERROR: No map available"
 #Load the downloaded image to a variable
 crop_file = "/home/user/FinalAssignment/20151107_200759_0b0a_analytic.tif"
 

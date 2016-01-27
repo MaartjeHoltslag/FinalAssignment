@@ -2,13 +2,14 @@ import requests
 import geojson
 from download import download_image
 
-def select_image(url, key, nw, se):
+def select_image(url, key, nw, se, image_type):
     """Downloads an image matching the selected coordinates.
     Args:
         url (str): the source url of the image
         key (str): authorisation key for the website
         nw (lst): Decimal coordinates of the North-West corner
         se (lst): Decimal coordinates of the South_East corner
+        image_type (str): The type of image you want to open (visual or analytic)
     Result:
         Tif file containing the downloaded image
     """
@@ -22,7 +23,7 @@ def select_image(url, key, nw, se):
     data = r.json()
     scenes_data = data["features"]
     for scene in scenes_data:
-        link = scene["properties"]["data"]["products"]["visual"]["full"]
+        link = scene["properties"]["data"]["products"][image_type]["full"]
 #        download_image(link, key)
     
     r = requests.get(link, stream=True, auth=(key, ''))
