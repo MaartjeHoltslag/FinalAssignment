@@ -12,7 +12,10 @@ def greencalculator(input_map):
     array = numpy.array(image)
     lst = array.shape
     count = lst[0]*lst[1]
-    nw, sw, ne, se = array[:(lst[0]/2), :(lst[1]/2)], array[(lst[0]/2):, :(lst[1]/2)], array[:(lst[0]/2), (lst[1]/2):], array[(lst[0]/2):, (lst[1]/2):]
-    for i in (nw, sw, ne, se):
+    quadrants = array[:(lst[0]/2), :(lst[1]/2)], array[(lst[0]/2):, :(lst[1]/2)], array[:(lst[0]/2), (lst[1]/2):], array[(lst[0]/2):, (lst[1]/2):]
+    green_list = []
+    for i in quadrants:
         percentage = (100*float(numpy.sum(i)))/(count/4)
-        print "The percentage of green for the {a:s} quadrant is {p:8.2f}".format(a=i, p=percentage)
+        green_list += [round(percentage, 3)]
+    return green_list
+        

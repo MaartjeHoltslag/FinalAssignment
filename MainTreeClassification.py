@@ -20,14 +20,13 @@ url = "https://api.planet.com/v0/scenes/ortho/"
 key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
 
 #Coordinates of point
-nw = (-122.486, 37.698)
-se = (-122.487, 37.699)
+point = (-122.486, 37.698)
 map_type = "visual"
-crop_file = "/home/user/FinalAssignment/DownloadFile_"+map_type+".tif"
+crop_file = "/home/user/FinalAssignment/Downloads/DownloadFile_"+map_type+".tif"
 
 #Download the image
 try:
-    select_image(url, key, nw, se, map_type, crop_file)
+    select_image(url, key, point, map_type, crop_file)
 except:
     print "ERROR: No map available"
 
@@ -43,8 +42,8 @@ classify(output_model, in_file, statistics_file, output_map)
 #Delete all none trees from dataset
 select_trees(output_map, selection_map)
 
-#Calculate percentage green
-greencalculator(output_map)
+#Calculate percentage green per quadrant (format: nw, sw, ne, se)
+print greencalculator(output_map)
 
 ##Apply model to other map
 
@@ -54,14 +53,13 @@ selection_map1 = "/home/user/FinalAssignment/output/ClassifiedImageTrees1.tif"
 in_file1 = "/home/user/FinalAssignment/output/InputMap1.tif"
 
 #Coordinates of point
-nw1 = (-122.363, 37.707)
-se1 = (-122.364, 37.708)
+point1 = (-122.363, 37.707)
 map_type1 = "visual"
-crop_file1 = "/home/user/FinalAssignment/DownloadFile1_"+map_type1+".tif"
+crop_file1 = "/home/user/FinalAssignment/Downloads/DownloadFile1_"+map_type1+".tif"
 
 #Download the image
 try:
-    select_image(url, key, nw1, se1, map_type1, crop_file1)
+    select_image(url, key, point1, map_type1, crop_file1)
 except:
     print "ERROR: No map available"
 
@@ -74,5 +72,5 @@ classify(output_model, in_file1, statistics_file, output_map1)
 #Delete all none trees from dataset
 select_trees(output_map1, selection_map1)
 
-#Calculate percentage green
-greencalculator(output_map1)
+#Calculate percentage green per quadrant (format: nw, sw, ne, se)
+print greencalculator(output_map1)

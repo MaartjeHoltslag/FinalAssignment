@@ -2,7 +2,7 @@ import requests
 import geojson
 from download import download_image
 
-def select_image(url, key, nw, se, image_type, file_name):
+def select_image(url, key, point, image_type, file_name):
     """Downloads an image matching the selected coordinates.
     Args:
         url (str): the source url of the image
@@ -12,6 +12,8 @@ def select_image(url, key, nw, se, image_type, file_name):
     Result:
         Tif file containing the downloaded image
     """
+    nw = point
+    se = (point[0]+0.001, point[1]+0.001)
     ne = (se[0], nw[1])
     sw = (nw[0], se[1])
     poly = geojson.Polygon([[nw, ne, se, sw, nw]])
