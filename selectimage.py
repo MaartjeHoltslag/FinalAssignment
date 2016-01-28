@@ -2,13 +2,12 @@ import requests
 import geojson
 from download import download_image
 
-def select_image(url, key, nw, se, image_type):
+def select_image(url, key, nw, se, image_type, file_name):
     """Downloads an image matching the selected coordinates.
     Args:
         url (str): the source url of the image
         key (str): authorisation key for the website
-        nw (lst): Decimal coordinates of the North-West corner
-        se (lst): Decimal coordinates of the South_East corner
+        point(lst): Decimal coordinates of the point for which the map should be retrieved
         image_type (str): The type of image you want to open (visual or analytic)
     Result:
         Tif file containing the downloaded image
@@ -18,7 +17,7 @@ def select_image(url, key, nw, se, image_type):
     poly = geojson.Polygon([[nw, ne, se, sw, nw]])
     intersects = geojson.dumps(poly)
     params = {"intersects": intersects,}
-    r = requests.get(url, params=params, auth=(key, ''))
+    r = requests.get(url, params=params, auth=(key, ''), stream = True)
     r.raise_for_status()
     data = r.json()
     scenes_data = data["features"]
@@ -28,8 +27,9 @@ def select_image(url, key, nw, se, image_type):
     
     r = requests.get(link, stream=True, auth=(key, ''))
     if 'content-disposition' in r.headers:
-        local_filename = r.headers['content-disposition'] \
-            .split("filename=")[-1].strip("'\"")
+        local_filename = file_name
+#        r.headers['content-disposition'] \
+#            .split("filename=")[-1].strip("'\"")
     else:
         local_filename = '.'.join(link.split('/')[-2:])
 

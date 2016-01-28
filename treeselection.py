@@ -1,4 +1,6 @@
 import gdal
+import Image
+import numpy
 from gdalconst import *
 from osgeo.gdalconst import GA_ReadOnly, GDT_Float32
 
@@ -17,6 +19,7 @@ def select_trees(input_map, output_map):
     outBand = outDataSet.GetRasterBand(1)
     outBand.WriteArray(array,0,0)
     outBand.SetNoDataValue(0)
+#    array[numpy.isnan(array)]= 0
     outDataSet.SetProjection(dataSource.GetProjection())
     outDataSet.SetGeoTransform(dataSource.GetGeoTransform())
     outBand.FlushCache()
