@@ -1,3 +1,10 @@
+############# First create the output and Downloads folder in                         #############
+############# the FinalAssignment directory (or change directories to own preference) #############
+
+# Stofzuigerzaag
+# Jorn Habes & Maartje Holtslag
+# 28-1-2016
+
 #Libraries
 from selectimage import select_image
 from modelcreator import create_model
@@ -21,6 +28,8 @@ key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
 
 #Coordinates of point
 point = (-122.486, 37.698)
+
+#Set map type and file location
 map_type = "visual"
 crop_file = "/home/user/FinalAssignment/Downloads/DownloadFile_"+map_type+".tif"
 
@@ -54,6 +63,8 @@ in_file1 = "/home/user/FinalAssignment/output/InputMap1.tif"
 
 #Coordinates of point
 point1 = (-122.363, 37.707)
+
+#Set map type and file location
 map_type1 = "visual"
 crop_file1 = "/home/user/FinalAssignment/Downloads/DownloadFile1_"+map_type1+".tif"
 

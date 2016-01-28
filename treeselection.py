@@ -1,13 +1,13 @@
 import gdal
 import Image
 import numpy
-from gdalconst import *
 from osgeo.gdalconst import GA_ReadOnly, GDT_Float32
 
 def select_trees(input_map, output_map):
-    """Select the trees from the input map and set the rest to NoData
+    """Select the trees from the input map and set the rest to NoData.
     Args:
         input_map (str): The tif file containing the defined classes
+        output_map (str): The destination of the new tif file
     Result:
         A tif file containing only the tree class
     """

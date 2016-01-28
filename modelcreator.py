@@ -11,7 +11,7 @@ def create_model(in_file, statistics_file, training_poly, output_model, confusio
         statistics_file (str): The output file to which the second order statistics will be written
         training_poly (str): Shape file (polygon) with known classes
     Result:
-        A model on which the classification can be based.
+        A model on which the classification can be based
     """
     #Create second order statistics application
     ComputeImagesStatistics = otbApplication.Registry.CreateApplication("ComputeImagesStatistics")

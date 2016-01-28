@@ -1,7 +1,7 @@
 import os
 
 def cut_size(input_image, xoff, yoff, xsize, ysize, output_image):
-    """Cuts the input image to the selected size
+    """Cuts the input image to the selected size.
     Args:
         input_image (str): The image that should be cut
         xoff (int): The starting X pixel

@@ -1,3 +1,10 @@
+############# First create the output and Downloads folder in                         #############
+############# the FinalAssignment directory (or change directories to own preference) #############
+
+# Stofzuigerzaag
+# Jorn Habes & Maartje Holtslag
+# 28-1-2016
+
 #Libraries
 from selectimage import select_image
 from sizecutter import cut_size
@@ -14,6 +21,8 @@ key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
 
 #Coordinates of point
 point_obj = (-118.4, 34.084)
+
+#Set map type and file location
 map_type_obj = "visual"
 crop_file_obj = "/home/user/FinalAssignment/Downloads/DownloadFileObject_"+map_type_obj+".tif"
 
@@ -28,7 +37,7 @@ cut_size(crop_file_obj, 1250, 1500, 750, 750, in_file_obj)
 
 ##Use object based selection
 min_size = 5 
-#Select all dark-green objects
+#Expression to select all dark-green objects
 expression = "(p1b2 < 100) and ((p1b2 > p1b1)or(p1b2>p1b3)) and (p1b1 < 90) and (p1b3<90)"
 #Select all objects
 OBIA_none = ''

@@ -5,7 +5,7 @@ sys.path.append('/usr/lib/otb/python')
 import otbApplication 
 
 def select_object(in_file, expression, min_size, OBIA, out_file):
-    """Selects the defined objects from an input tif file
+    """Selects the defined objects from an input tif file.
     Args:
         in_file (str): The tif file containing the image
         expression (str): Expression to define the properties of the wanted selection
