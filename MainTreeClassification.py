@@ -4,6 +4,7 @@ from modelcreator import create_model
 from classification import classify
 from treeselection import select_trees
 from sizecutter import cut_size
+from greenpercentage import greencalculator
 
 #Files
 statistics_file = "/home/user/FinalAssignment/output/Statistics.xml"
@@ -42,6 +43,9 @@ classify(output_model, in_file, statistics_file, output_map)
 #Delete all none trees from dataset
 select_trees(output_map, selection_map)
 
+#Calculate percentage green
+greencalculator(output_map)
+
 ##Apply model to other map
 
 #Files
@@ -69,3 +73,6 @@ classify(output_model, in_file1, statistics_file, output_map1)
 
 #Delete all none trees from dataset
 select_trees(output_map1, selection_map1)
+
+#Calculate percentage green
+greencalculator(output_map1)
