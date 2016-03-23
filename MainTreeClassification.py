@@ -24,7 +24,7 @@ in_file = "/home/user/FinalAssignment/output/InputMap.tif"
 
 #Data source
 url = "https://api.planet.com/v0/scenes/ortho/"
-key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
+key = #Add own key
 
 #Coordinates of point
 point = (-122.486, 37.698)
