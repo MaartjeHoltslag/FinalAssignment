@@ -17,7 +17,7 @@ out_file_all = "/home/user/FinalAssignment/output/OutputMapObjectAll.shp"
 
 #Data source
 url = "https://api.planet.com/v0/scenes/ortho/"
-key = "a9dcf4c4685f46d38ef914c1fcc4c31c"
+key =#Add own key
 
 #Coordinates of point
 point_obj = (-118.4, 34.084)
